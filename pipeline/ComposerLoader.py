@@ -1,5 +1,5 @@
 import os, torch, torch.utils.data, scipy.misc, numpy as np, pdb
-import utils
+from .utils import *
 
 class ComposerDataset(torch.utils.data.Dataset):
     def __init__(self, directory, unlabeled_datasets, labeled_datasets, size_per_dataset=10000, inds=None, unlabeled_array='shader2', labeled_array='shader2'):
@@ -12,8 +12,8 @@ class ComposerDataset(torch.utils.data.Dataset):
         self.unlabeled_datasets = [os.path.join(directory, dataset) for dataset in unlabeled_datasets.split(',')]
         self.labeled_datasets = [os.path.join(directory, dataset) for dataset in labeled_datasets.split(',')]
 
-        print '<Loader> Unlabeled: ', self.unlabeled_datasets
-        print '<Loader> Labeled: ', self.labeled_datasets
+        print ('<Loader> Unlabeled: ', self.unlabeled_datasets)
+        print ('<Loader> Labeled: ', self.labeled_datasets)
 
         self.unlabeled_selections = ['input', 'mask']
         self.labeled_selections = ['input', 'mask', 'albedo', 'depth', 'normals', 'lights', 'shading']
@@ -49,7 +49,7 @@ class ComposerDataset(torch.utils.data.Dataset):
 
         if inds:
             inds = [i+(offset*self.size_per_dataset) for offset in range(len(datasets)) for i in inds]
-            print '<Loader> Indices: ', inds
+            print ('<Loader> Indices: ', inds)
             for ind, sel in enumerate(selections):
                 files = data_files[ind]
                 if sel == 'lights':
@@ -152,10 +152,10 @@ if __name__ == '__main__':
     # selection_fn = lambda fname: 'shading' in fname
     dset = ComposerDataset(directory, unlabeled_datasets, labeled_datasets)
     loader = torch.utils.data.DataLoader(dset, batch_size=16, num_workers=4)
-    print 'done init'
+    print ('done init')
     time_0 = time.time()
     for i, inp in enumerate(loader):
         # pdb.set_trace()
-        print i, [[t.size() for t in sublist] for sublist in inp], len(inp), len(inp[0]), len(inp[1])
-    print 'total time: ', time.time() - time_0
+        print (i, [[t.size() for t in sublist] for sublist in inp], len(inp), len(inp[0]), len(inp[1]))
+    print ('total time: ', time.time() - time_0)
 

@@ -5,7 +5,7 @@ path = 'output/car_train/'
 
 # cube, sphere, cylinder, cone, torus, suzanne
 
-print path
+print (path)
 
 numIDs = 20000
 
@@ -13,11 +13,11 @@ lowers = []
 face = 0
 while face < numIDs:
     if face % 5000 == 0:
-        print 'Checking: ', face
+        print ('Checking: ', face)
     if not (os.path.exists( path + str(face) + '_normals.png' ) and \
         os.path.exists( path + str(face) + '_mask.png' ) and \
         os.path.exists( path + str(face) + '_specular.png' )):
-        print '\nMissing: ', face, '\n'
+        print ('\nMissing: ', face, '\n')
         lowers.append(face)
         face += 50
     else:
@@ -38,4 +38,4 @@ def makeDivisions(lowers):
 
 divisions = makeDivisions(lowers)
 
-print divisions
+print (divisions)

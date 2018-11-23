@@ -1,6 +1,6 @@
 import sys, torch, torch.nn as nn, torch.nn.functional as F, pdb
 from torch.autograd import Variable
-import primitives
+#import primitives
 
 class Composer(nn.Module):
 
@@ -29,14 +29,14 @@ if __name__ == '__main__':
     decomposer = torch.load(decomposer_path)
     shader = torch.load(shader_path)
     composer = Composer(decomposer, shader).cuda()
-    print composer
+    print (composer)
     # pdb.set_trace()
     inp = Variable(torch.randn(5,3,256,256).cuda())
     mask = Variable(torch.randn(5,3,256,256).cuda())
 
     out = composer.forward(inp, mask)
 
-    print [i.size() for i in out]
+    print ([i.size() for i in out])
 
     # pdb.set_trace()
 

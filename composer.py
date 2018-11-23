@@ -76,12 +76,12 @@ logger = pipeline.Logger(['recon', 'refl', 'depth', 'shape', 'lights', 'shading'
 param_updater = pipeline.ParamUpdater(args.transfer)
 
 for epoch in range(args.num_epochs):
-    print '<Main> Epoch {}'.format(epoch)
+    print ('<Main> Epoch {}'.format(epoch))
 
     if param_updater.check(epoch):
         ## update which parameters are updated
         transfer = param_updater.refresh(epoch)
-        print 'Updating params: ', epoch, transfer
+        print ('Updating params: ', epoch, transfer)
         ## get a new trainer with different learnable parameters
         trainer = pipeline.ComposerTrainer( model, train_loader, args.lr, args.lights_mult, args.un_mult, args.lab_mult, transfer, 
                                     epoch_size=args.epoch_size, iters=args.iters)

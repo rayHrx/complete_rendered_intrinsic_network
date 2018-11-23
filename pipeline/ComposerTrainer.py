@@ -13,18 +13,18 @@ class ComposerTrainer:
 
         ## update only selected parameters
         parameters = []
-        print 'Parameters: '
+        print ('Parameters: ')
         if 'reflectance' in transfer:
-            print '    |-- reflectance'
+            print ('    |-- reflectance')
             parameters.append( {'params': self.model.decomposer.decoder_reflectance.parameters(), 'lr': lr} )
         if 'normals' in transfer:
-            print '    |-- normals'
+            print ('    |-- normals')
             parameters.append( {'params': self.model.decomposer.decoder_normals.parameters(), 'lr': lr} )
         if 'lights' in transfer:
-            print '    |-- lights'
+            print ('    |-- lights')
             parameters.append( {'params': self.model.decomposer.decoder_lights.parameters(), 'lr': lr} )
         if 'shader' in transfer:
-            print '    |-- shader'
+            print ('    |-- shader')
             parameters.append( {'params': self.model.shader.parameters(), 'lr': lr} )
 
         self.optimizer = optim.Adam(parameters, lr=lr)
@@ -93,7 +93,7 @@ class ComposerTrainer:
             losses.update(loss_data)
             if losses.count * self.loader.batch_size > self.epoch_size:
                 break
-        print 'Losses: ', losses.avgs
+        print ('Losses: ', losses.avgs)
         return losses.avgs
 
     def train(self):

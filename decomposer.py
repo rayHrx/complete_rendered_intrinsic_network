@@ -49,11 +49,11 @@ logger = pipeline.Logger(['refl', 'shape', 'lights'], args.save_path)
 trainer = pipeline.DecomposerTrainer(model, train_loader, args.lr, args.lights_mult)
 
 for epoch in range(args.num_epochs):
-    print '<Main> Epoch {}'.format(epoch)
+    print ('<Main> Epoch {}'.format(epoch))
 
     ## save model state
     state = model.state_dict()
-    torch.save( state, open(os.path.join(args.save_path, 'state.t7'), 'w') )
+    torch.save( state, open(os.path.join(args.save_path, 'state.t7'), 'wb') )
     
     ## get losses and save visualization on val images
     val_losses = pipeline.visualize_decomposer(model, val_loader, args.save_path, epoch)

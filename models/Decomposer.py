@@ -1,6 +1,6 @@
 import sys, torch, torch.nn as nn, torch.nn.functional as F
 from torch.autograd import Variable
-import primitives
+from .primitives import *
 
 '''
 Predicts reflectance, shape, and lighting conditions given an image
@@ -26,7 +26,7 @@ class Decomposer(nn.Module):
         ## stride of 1 on first layer and 2 everywhere else
         stride_fn = lambda ind: 1 if ind==0 else 2
         sys.stdout.write( '<Decomposer> Building Encoder' )
-        self.encoder = primitives.build_encoder(channels, kernel_size, padding, stride_fn)
+        self.encoder = build_encoder(channels, kernel_size, padding, stride_fn)
 
         #######################
         #### shape decoder #### 
@@ -41,17 +41,17 @@ class Decomposer(nn.Module):
         ## mult = 2 because the skip layer concatenates
         ## an encoder layer with the decoder layer,
         ## so the number of input channels in each layer is doubled.
-        self.decoder_reflectance = primitives.build_encoder(channels, kernel_size, padding, stride_fn, mult=2)
-        self.decoder_normals = primitives.build_encoder(channels, kernel_size, padding, stride_fn, mult=2)
+        self.decoder_reflectance = build_encoder(channels, kernel_size, padding, stride_fn, mult=2)
+        self.decoder_normals = build_encoder(channels, kernel_size, padding, stride_fn, mult=2)
         channels[-1] = 1
-        self.decoder_depth = primitives.build_encoder(channels, kernel_size, padding, stride_fn, mult=2)
+        self.decoder_depth = build_encoder(channels, kernel_size, padding, stride_fn, mult=2)
         self.upsampler = nn.UpsamplingNearest2d(scale_factor=2)
 
         #### lights encoder
         lights_channels = [256, 128, 64]
         stride_fn = lambda ind: 2
         sys.stdout.write( '<Decomposer> Lights Encoder  ' )
-        self.decoder_lights = primitives.build_encoder(lights_channels, kernel_size, padding, stride_fn)
+        self.decoder_lights = build_encoder(lights_channels, kernel_size, padding, stride_fn)
         lights_encoded_dim = 2
  
         self.lights_fc1 = nn.Linear(lights_channels[-1] * (lights_encoded_dim ** 2), 32)
@@ -63,7 +63,7 @@ class Decomposer(nn.Module):
             x = decoder[ind](x)
             if ind != 0:
                 x = self.upsampler(x)
-            x = primitives.join(1)(x, encoded[-(ind+1)])
+            x = join(1)(x, encoded[-(ind+1)])
             x = F.leaky_relu(x)
 
         x = decoder[-1](x)
@@ -98,7 +98,7 @@ class Decomposer(nn.Module):
         b = torch.clamp(normals[:,-1,:,:].unsqueeze(1), 0, 1)
         clamped = torch.cat((rg, b), 1)
         ## normals are unit vector
-        normed = primitives.normalize(clamped)
+        normed = normalize(clamped)
 
         ## turn float mask into bool array
         mask = mask < 0.25
@@ -117,8 +117,8 @@ if __name__ == '__main__':
     # lights = Variable(torch.randn(5,4))
     decomposer = Decomposer()
     out = decomposer.forward(inp, mask)
-    print decomposer
-    print [i.size() for i in out]
+    print (decomposer)
+    print ([i.size() for i in out])
 
 
 

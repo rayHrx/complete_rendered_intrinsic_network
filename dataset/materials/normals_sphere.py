@@ -25,8 +25,8 @@ for x in range(dim):
 
 # pdb.set_trace()
 img[:,:,:channels-1] = img[:,:,:channels-1]/2. + .5
-print img.max(0).max(0)
-print img.min(0).min(0)
+print (img.max(0).max(0))
+print (img.min(0).min(0))
 scipy.misc.imsave('normals_vector.png', img)
 
 for ind in range(channels-1):

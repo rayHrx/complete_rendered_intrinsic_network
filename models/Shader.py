@@ -1,6 +1,6 @@
 import torch, torch.nn as nn, torch.nn.functional as F
 from torch.autograd import Variable
-from primitives import *
+from .primitives import *
 
 '''
 Predicts shading image given shape and lighting conditions.
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     lights = Variable(torch.randn(5,4))
     shader = Shader()
     out = shader.forward(shape, lights)
-    print out.size()
+    print (out.size())
 
 
 

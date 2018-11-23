@@ -107,14 +107,14 @@ if __name__ == '__main__':
     d3 = 3 - read_img('test_images/5502_depth.png')
     d4 = torch.randn(1,256,256)
     batch = torch.cat((d1, d2, d3, d4), 0)
-    print batch.size()
+    print (batch.size())
     cimg = colormap(batch)
-    print cimg.size()
+    print (cimg.size())
     for ind in range(batch.size(0)):
         original = batch[ind].numpy()
-        print original.shape
+        print (original.shape)
         colored = cimg[ind].numpy().transpose(1,2,0)
-        print colored.shape
+        print (colored.shape)
         scipy.misc.imsave('test_images/original_' + str(ind) + '.png', original)
         scipy.misc.imsave('test_images/colored_' + str(ind) + '.png', colored)
 #     # c = 3

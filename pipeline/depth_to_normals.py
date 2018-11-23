@@ -56,7 +56,7 @@ if __name__ == '__main__':
     img2 = torch.Tensor(img2).unsqueeze(0).unsqueeze(0)
     img2 = Variable(img2)
     img = torch.cat( (img, img2), 0 )
-    print img.size()
+    print (img.size())
 
     normals = depth_to_normals(img)
 
@@ -64,17 +64,17 @@ if __name__ == '__main__':
     loss = normals.sum()
     loss.backward()
     
-    print normals, normals
+    print (normals, normals)
     norm1 = normals[0]
     norm2 = normals[1]
     norm1 = norm1.data.numpy()
     norm1 = norm1.transpose(1,2,0)
-    print norm1.shape
+    print (norm1.shape)
     scipy.misc.imsave('test_images/356_approx_normals.png', norm1)
 
     norm2 = norm2.data.numpy()
     norm2 = norm2.transpose(1,2,0)
-    print norm2.shape
+    print (norm2.shape)
     scipy.misc.imsave('test_images/5502_approx_normals.png', norm2)
     # inp = Variable( torch.randn(3,5,5) )
     # weight = Parameter( torch.randn(3,3) )

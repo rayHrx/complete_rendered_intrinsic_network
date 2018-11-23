@@ -25,7 +25,7 @@ def use_divisions(args):
         launch(args, start, end)
 
 def launch(args, start, end):
-    print 'Submitting: ', start, end
+    print ('Submitting: ', start, end)
         
     working_dir = os.path.dirname(os.path.realpath(__file__))
     repo_folder = os.path.join(working_dir, '..')

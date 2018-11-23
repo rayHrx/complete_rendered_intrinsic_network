@@ -13,12 +13,12 @@ class Render:
         np.save(lights_path, lights)
 
         num_lights = lights.shape[0]
-        print 'Rendering {} lights...'.format(num_lights)
+        print ('Rendering {} lights...'.format(num_lights))
         self.__blender(lights_path, write_path, verbose)
 
         images = self.__read_images(write_path, num_lights)
         if verbose:
-            print 'Deleting {}\n'.format(write_path)
+            print ('Deleting {}\n'.format(write_path))
         self.__rmdir(write_path)
         return Variable( torch.Tensor(images.transpose(0,3,1,2)[:,:3]) )
 
@@ -36,7 +36,7 @@ class Render:
                         '--lights_path', lights_path, '--save_path', write_path]
         if verbose:
             stdout = None
-            print command
+            print (command)
         else:
             stdout = open( os.path.join(write_path, 'log.txt'), 'w')
 

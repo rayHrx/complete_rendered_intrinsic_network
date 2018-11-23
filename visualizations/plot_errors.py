@@ -44,20 +44,20 @@ def plot_logs(prefix, ax, labels):
             logs[label].append(errors)
 
     min_length = find_min_length(logs)
-    print logs
-    print min_length
+    print (logs)
+    print (min_length)
     logs = truncate_logs(logs, min_length)
 
-    print logs
+    print (logs)
 
     x = range(min_length)
     for label in labels:
-        print label
+        print (label)
         means, std = extract_stats(logs[label])
         lower = [means[i]-std[i] for i in range(len(means))]
         upper = [means[i]+std[i] for i in range(len(means))]
-        print x
-        print means
+        print (x)
+        print (means)
 
         ax.plot(x, means, linewidth=3, color=colors[label], label=fig_labels[label])
         ax.fill_between(x, lower, upper, color=colors[label], alpha=0.25)

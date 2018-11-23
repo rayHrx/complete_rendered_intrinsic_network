@@ -1,5 +1,5 @@
 import os, torch, torch.utils.data, scipy.misc, numpy as np, pdb
-import utils
+from .utils import *
 
 '''
 directory : base path of datasets 
@@ -57,9 +57,9 @@ class IntrinsicDataset(torch.utils.data.Dataset):
 
         ## for loading specific indices of images
         if inds:
-            print 'inds: ', inds
+            print ('inds: ', inds)
             inds = [i+(offset*self.size_per_dataset) for offset in range(len(self.datasets)) for i in inds]
-            print inds
+            print (inds)
             for ind, sel in enumerate(self.selections):
                 files = self.data_files[ind]
                 if sel == 'lights':
@@ -137,7 +137,7 @@ class IntrinsicDataset(torch.utils.data.Dataset):
                 ## normals are 3 channels
                 ## scaled from [0,1] --> [-1,1] 
                 if sel == 'normals':
-                    out = utils.image_to_vector(out)
+                    out = image_to_vector(out)
             outputs.append(out)
         return outputs
 
@@ -159,9 +159,9 @@ if __name__ == '__main__':
     # selection_fn = lambda fname: 'shading' in fname
     dset = IntrinsicDataset(directory, datasets, selections)
     loader = torch.utils.data.DataLoader(dset, batch_size=32, num_workers=4)
-    print 'done init'
+    print ('done init')
     time_0 = time.time()
     for i, inp in enumerate(loader):
-        print i, [t.size() for t in inp], len(inp)
-    print 'total time: ', time.time() - time_0
+        print (i, [t.size() for t in inp], len(inp))
+    print ('total time: ', time.time() - time_0)
 

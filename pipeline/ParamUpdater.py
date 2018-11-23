@@ -32,4 +32,4 @@ if __name__ == '__main__':
 
     for epoch in range(400):
         if p.check(epoch):
-            print epoch, p.refresh(epoch)
+            print (epoch, p.refresh(epoch))

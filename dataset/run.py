@@ -26,7 +26,7 @@ def render(script, low, high, repeat, category, output):
 
 
 if __name__ == '__main__':
-    print args
+    print (args)
     render(args.script, str(args.low), str(args.high), str(args.repeat), args.category, args.output)
 
 
