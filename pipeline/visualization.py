@@ -121,15 +121,18 @@ def visualize_decomposer(model, loader, save_path, epoch, save_raw = False):
 
         refl_pred, depth_pred, shape_pred, lights_pred = model.forward(inp, mask)
 
-        refl_loss += criterion(refl_pred, refl_targ).data[0]
-        shape_loss += criterion(shape_pred, shape_targ).data[0]
-        lights_loss += criterion(lights_pred, lights_targ).data[0]
+        #print("reft_pred:",refl_pred.shape)
+        #print("reft_targ:",refl_targ.shape)
+        refl_loss += criterion(refl_pred, refl_targ).item()
+        shape_loss += criterion(shape_pred, shape_targ).item()
+        lights_loss += criterion(lights_pred, lights_targ).item()
 
         shape_targ = pipeline.vector_to_image(shape_targ)
         shape_pred = pipeline.vector_to_image(shape_pred)
-
+        
         depth_targ = depth_targ.unsqueeze(1).repeat(1,3,1,1)
-        depth_pred = depth_pred.repeat(1,3,1,1)
+        #Unsqueeze the tensor to make 4 x 1 x 255 x 255
+        depth_pred = depth_pred.unsqueeze(1).repeat(1,3,1,1)
 
         # pdb.set_trace()
         splits = []

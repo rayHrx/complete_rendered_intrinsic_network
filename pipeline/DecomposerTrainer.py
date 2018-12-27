@@ -23,16 +23,22 @@ class DecomposerTrainer:
             self.optimizer.zero_grad()
             refl_pred, depth_pred, shape_pred, lights_pred = self.model.forward(inp, mask)
             refl_loss = self.criterion(refl_pred, refl_targ)
+            #print("depth_pred------------------------:",depth_pred.shape)
+            #print("depth_targ------------------------:",depth_targ.shape)
+            # We squeeze the depth_targ to make 256 x 256
+            depth_targ = torch.squeeze(depth_targ)
             depth_loss = self.criterion(depth_pred, depth_targ)
+            #print("shape_pred------------------------:",shape_pred.shape)
+            #print("shape_targ------------------------:",shape_targ.shape)
             shape_loss = self.criterion(shape_pred, shape_targ)
             lights_loss = self.criterion(lights_pred, lights_targ)
             loss = refl_loss + depth_loss + shape_loss + (lights_loss * self.lights_mult)
             loss.backward()
             self.optimizer.step()
 
-            losses.update( [l.data[0] for l in [refl_loss, shape_loss, lights_loss] ])
+            losses.update( [l.item() for l in [refl_loss, shape_loss, lights_loss] ])
             progress.update(self.loader.batch_size)
-            progress.set_description( '%.5f | %.5f | %.5f | %.3f' % (refl_loss.data[0], depth_loss.data[0], shape_loss.data[0], lights_loss.data[0]) )
+            progress.set_description( '%.5f | %.5f | %.5f | %.3f' % (refl_loss.item(), depth_loss.item(), shape_loss.item(), lights_loss.item()) )
         print ('<Train> Losses: ', losses.avgs)
         return losses.avgs
 

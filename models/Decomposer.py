@@ -92,14 +92,12 @@ class Decomposer(nn.Module):
         reflectance = self.__decode(self.decoder_reflectance, encoded, x)
         normals = self.__decode(self.decoder_normals, encoded, x)
         depth = self.__decode(self.decoder_depth, encoded, x)
-        print("before clamped:",normals.shape)
         ## R, G in [-1,1]
         rg = torch.clamp(normals[:,:-1,:,:], -1, 1)
         ## B in [0,1]
         b = torch.clamp(normals[:,-1,:,:].unsqueeze(1), 0, 1)
         clamped = torch.cat((rg, b), 1)
         ## normals are unit vector
-        print("before calling norm:",clamped.shape)
         normed = normalize(clamped)
 
         ## turn float mask into bool array
@@ -108,8 +106,12 @@ class Decomposer(nn.Module):
         ## we don't count them in error
         reflectance[mask] = 0
         normed[mask] = 0
-        depth[mask[:,0]] = 0
-
+        #Take only one layer of RGB to mask the depth infomation
+        mask_list = torch.split(mask, 1, dim=1)
+        mask_one_dim = mask_list[0]
+        depth[mask_one_dim] = 0
+        # We queeze the tensor here to make 4 x 256 x 256
+        depth = torch.squeeze(depth)
         return reflectance, depth, normed, lights
 
 

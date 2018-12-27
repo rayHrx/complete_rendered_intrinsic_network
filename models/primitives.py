@@ -45,14 +45,10 @@ def decode(encoder, decoder, upsampler):
 
 ## normalize to unit vectors
 def normalize(normals):
-    print("within function normalize:")
-    print("norm",normals.shape)
     ## I make the keepdim params to be True (default is false) so the dimension of the..
     ## Magnitude is the same as the normals to be normed
     magnitude = torch.pow(normals, 2).sum(1,keepdim = True)
-    print("first",magnitude.shape)
     magnitude = magnitude.sqrt().repeat(1,3,1,1)
-    print("second",magnitude.shape)
     normed = normals / (magnitude + 1e-6)
     return normed
 

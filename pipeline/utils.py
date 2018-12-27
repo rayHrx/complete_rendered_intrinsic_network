@@ -17,7 +17,12 @@ class AverageMeter(object):
         self.vals = vals
         self.sums = map(sum, zip(self.sums, vals))
         self.count += n
-        self.avgs = [float(s) / self.count for s in self.sums]
+        idx = 0
+        for s in self.sums:
+            self.avgs[idx] = float(s) / float(self.count)
+            idx = idx + 1
+        #self.avgs = [float(s) / float(self.count) for s in self.sums]
+        #print("update avgs :",self.avgs)
 
 def initialize(args):
     mkdir(args.save_path)
@@ -52,10 +57,10 @@ def vector_to_image(vector):
     dim = vector.dim()
     ## batch
     if dim == 4:
-        mask = torch.pow(vector,2).sum(1) > .01
+        mask = torch.pow(vector,2).sum(1, keepdim = True) > .01
         mask = mask.repeat(1,3,1,1)
     elif dim == 3:
-        mask = torch.pow(vector,2).sum(0) > .01
+        mask = torch.pow(vector,2).sum(0, keepdim = True) > .01
         mask = mask.repeat(3,1,1)
     else:
         raise RuntimeError 
