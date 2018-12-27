@@ -76,6 +76,7 @@ class Decomposer(nn.Module):
         for ind in range(len(self.encoder)):
             x = self.encoder[ind](x)
             x = F.leaky_relu(x)
+            ## store intermedia values for residuel layers
             encoded.append(x)
 
         ## decode lights
@@ -91,13 +92,14 @@ class Decomposer(nn.Module):
         reflectance = self.__decode(self.decoder_reflectance, encoded, x)
         normals = self.__decode(self.decoder_normals, encoded, x)
         depth = self.__decode(self.decoder_depth, encoded, x)
-
+        print("before clamped:",normals.shape)
         ## R, G in [-1,1]
         rg = torch.clamp(normals[:,:-1,:,:], -1, 1)
         ## B in [0,1]
         b = torch.clamp(normals[:,-1,:,:].unsqueeze(1), 0, 1)
         clamped = torch.cat((rg, b), 1)
         ## normals are unit vector
+        print("before calling norm:",clamped.shape)
         normed = normalize(clamped)
 
         ## turn float mask into bool array

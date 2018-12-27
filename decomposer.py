@@ -1,5 +1,6 @@
 #!/om/user/janner/anaconda2/envs/pytorch/bin/python
 
+#python decomposer.py --data_path dataset/output --save_path saved/decomposer --array shader --num_train 5 --num_val 20 --train_sets airplane_test --val_set airplane_val --batch_size 4
 import sys, os, argparse, torch, pdb
 import models, pipeline
 
@@ -12,7 +13,7 @@ parser.add_argument('--val_sets',       type=str,   default='motorbike_val,bottl
         help='folders within data_path to draw from during validation')
 parser.add_argument('--intrinsics',     type=list,  default=['input', 'mask', 'albedo', 'depth', 'normals', 'lights'],
         help='intrinsic images to load from the train and val sets')
-parser.add_argument('--save_path',      type=str,   default='components/test_logger/',
+parser.add_argument('--save_path',      type=str,   default='components/test_logger/',  
         help='save folder for model, plots, and visualizations')
 parser.add_argument('--lr',             type=float, default=0.01,
         help='learning rate')
@@ -30,7 +31,6 @@ parser.add_argument('--loaders',    type=int,   default=4,
         help='number of parallel data loading processes')
 parser.add_argument('--batch_size',    type=int,   default=32)
 args = parser.parse_args()
-
 pipeline.initialize(args)
 
 ## load model : image --> reflectance x normals x depth x lighting 
