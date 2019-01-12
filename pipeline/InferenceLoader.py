@@ -18,19 +18,20 @@ array : name of lighting parameter array
 '''
 #train_set = pipeline.IntrinsicDataset(args.data_path, args.inference_set, args.inference, array=args.array, size_per_dataset=args.num_train)
 class InferenceDataset(torch.utils.data.Dataset):
-    def __init__(self, directory, datasets, selections, rel_path=''):
+    def __init__(self, directory, datasets, selections,size_per_dataset=1,rel_path=''):
         self.directory = directory
         self.data_files = []
         ## get list of relative paths to all dataset folders
         self.datasets = [os.path.join(directory, dataset) for dataset in datasets.split(',')]
         self.selections = selections
         self.rel_path = rel_path
+        self.size_per_dataset = size_per_dataset
 
         for dataset in self.datasets:
             ## list of images for this object category
             self.set_specific = []
             for sel in self.selections:             
-                files = self.__find_sort_files(dataset, sel) 
+                files = self.__find_sort_files(dataset, sel)[:size_per_dataset] 
                 self.set_specific.append(files)
             self.data_files.append(self.set_specific)
         

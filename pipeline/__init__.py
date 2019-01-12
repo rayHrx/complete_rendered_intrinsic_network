@@ -4,6 +4,7 @@ from .Render import *
 from .ComposerLoader import *
 from .Trainer import *
 from .DecomposerTrainer import *
+from .InferenceLoader import *
 from .ComposerTrainer import *
 from .visualization import *
 from .Logger import *

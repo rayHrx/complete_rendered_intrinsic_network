@@ -1,10 +1,11 @@
 #!/om/user/janner/anaconda2/envs/pytorch/bin/python
 
-#python decomposer.py --data_path dataset/output --save_path saved/decomposer --array shader --num_train 5 --num_val 20 --train_sets airplane_test --val_set airplane_val --batch_size 4
+#python decomposer.py --data_path dataset/output --save_path saved/decomposer --array shader 
+# --num_train 5 --num_val 20 --train_sets airplane_test --val_set airplane_val --batch_size 4
 import sys, os, argparse, torch, pdb
 import models, pipeline
 
-        parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser()
 parser.add_argument('--data_path',      type=str,   default='dataset/output/',
         help='base path for datasets')
 parser.add_argument('--train_sets',     type=str,   default='motorbike_train,bottle_train',
