@@ -1,8 +1,14 @@
 import sys, math, numpy as np, pdb
+import scipy, os
 from tqdm import tqdm, trange
 import torch, torch.nn as nn, torch.optim as optim
 from torch.autograd import Variable
 import pipeline
+
+def detachAndSqueeze(result):
+    result = result.data[0]
+    result = torch.squeeze(result)
+    return result
 
 class DecomposerTrainer:
     def __init__(self, model, loader, lr, lights_mult):
@@ -12,6 +18,8 @@ class DecomposerTrainer:
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
         self.lights_mult = lights_mult
 
+
+
     def __epoch(self):
         self.model.train()
         losses = pipeline.AverageMeter(3)
@@ -20,6 +28,32 @@ class DecomposerTrainer:
         for ind, tensors in enumerate(self.loader):
             tensors = [Variable(t.float().cuda(async=True)) for t in tensors]
             inp, mask, refl_targ, depth_targ, shape_targ, lights_targ = tensors
+
+        
+            # r_targ = refl_targ.data[0]
+            # s_targ = shape_targ.data[0]
+
+            # print("shape 1:",r_targ.shape)
+            # print("shape 2:",s_targ.shape)
+
+            # print("shape 1:",r_targ.shape)
+            # print("shape 2:",s_targ.shape)
+
+            # refl_result = np.zeros((256,256,3))
+            # shape_result = np.zeros((256,256,3))
+
+            # for i in range(0,256):
+            #         for j in range(0,256):
+            #                 for k in range(0,3):
+            #                         refl_result[i][j][k] = r_targ[k][i][j]
+            #                         shape_result[i][j][k] = s_targ[k][i][j]
+
+ 
+            # dir_path = os.path.dirname(os.path.realpath(__file__))
+            # print("current path is:",dir_path)
+            # scipy.misc.imsave('test_out/refl.png', refl_result)
+            # scipy.misc.imsave('test_out/shape.png', shape_result)  
+
             self.optimizer.zero_grad()
             refl_pred, depth_pred, shape_pred, lights_pred = self.model.forward(inp, mask)
             refl_loss = self.criterion(refl_pred, refl_targ)

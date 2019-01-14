@@ -1,6 +1,12 @@
-import sys, os, argparse, torch, pdb, matplotlib
+import sys, os, argparse, torch, pdb, matplotlib, scipy.misc, numpy
 import models, pipeline
 from torch.autograd import Variable
+
+def detachAndSqueeze(result):
+        result = result.data[0]
+        result = torch.squeeze(result)
+        return result
+
 #python produceAlbedoImage.py --saved_path saved/decomposer --state_name state.t7
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_path',      type=str,   default='dataset/',
@@ -17,6 +23,8 @@ parser.add_argument('--saved_path',      type=str,   default='saved/decomposer/'
         help='the folder where saved weights are')
 parser.add_argument('--loaders',    type=int,   default=4,
         help='number of parallel data loading processes')
+parser.add_argument('--output_path',    type=str,   default='dataset/input/predict/',
+        help='number of parallel data loading processes')
 args = parser.parse_args()
 PATH = args.saved_path + args.state_name
 model = models.Decomposer().cuda()
@@ -26,18 +34,30 @@ model.load_state_dict(torch.load(PATH))
 inference_sets = pipeline.InferenceDataset(args.data_path, args.inference_sets, args.inference, size_per_dataset = args.num_pred)
 inference_loader = torch.utils.data.DataLoader(inference_sets, batch_size=1, num_workers=args.loaders)
 
+index = 0
 for ind, tensors in enumerate(inference_loader):
         tensors = [Variable(t.float().cuda(async=True)) for t in tensors]
         inp, mask = tensors
+        # refl_pred = 3*256*256 , shape_pred = 3*256*256 , depth_pred = 256*256
         refl_pred, depth_pred, shape_pred, lights_pred = model.forward(inp, mask)
+        refl_pred = detachAndSqueeze(refl_pred)
+        depth_pred = detachAndSqueeze(depth_pred)
+        shape_pred = detachAndSqueeze(shape_pred)    
 
-print("refl_shape:",refl_pred.shape)
-print("refl_shape:",refl_pred.shape)
-print("refl_shape:",refl_pred.shape)
+        refl_result = numpy.zeros((256,256,3))
+        shape_result = numpy.zeros((256,256,3))
 
-matplotlib.image.imsave('dataset/input/predict/refl.png', refl_pred)
-matplotlib.image.imsave('dataset/input/predict/depth.png', depth_pred)
-matplotlib.image.imsave('dataset/input/predict/shape.png', shape_pred)
-matplotlib.image.imsave('dataset/input/predict/lights.png', lights_pred)
+        for i in range(0,256):
+                for j in range(0,256):
+                        for k in range(0,3):
+                                refl_result[i][j][k] = refl_pred[k][i][j]
+                                shape_result[i][j][k] = shape_pred[k][i][j]
+
+        scipy.misc.imsave(args.output_path + str(index) + 'refl.png', refl_result)
+        scipy.misc.imsave(args.output_path + str(index) + 'shape.png', shape_result)   
+        index = index + 1
+
+
+
 
          
