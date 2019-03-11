@@ -7,13 +7,13 @@ def detachAndSqueeze(result):
         result = torch.squeeze(result)
         return result
 
-#python produceAlbedoImage.py --saved_path saved/decomposer --state_name state.t7
+#python produceAlbedoImage.py --saved_path saved/decomposer/ --state_name state.t7
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_path',      type=str,   default='dataset/',
         help='base path for datasets')  
 parser.add_argument('--inference_sets',      type=str,   default='input',  
         help='the folder where images need to be inferenced are')      
-parser.add_argument('--num_pred',      type=int,   default=2,  
+parser.add_argument('--num_pred',      type=int,   default=1,  
         help='the number of images to be predicted')         
 parser.add_argument('--state_name',      type=str,   default='state.t7',  
         help='default state to load')

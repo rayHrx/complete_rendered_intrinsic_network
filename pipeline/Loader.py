@@ -32,22 +32,29 @@ class IntrinsicDataset(torch.utils.data.Dataset):
             for sel in self.selections:
                 ## lights are stored in an array, which can be loaded directly
                 if sel == 'lights':
+                    #files = self.__find_sort_files(dataset, 'lights')[:size_per_dataset] 
+                    #assert len(files) == size_per_dataset    
                     ## load lights array
-                    files = np.load( os.path.join(self.rel_path, 'dataset/arrays/', array + '.npy') )[:size_per_dataset,:]
+                    files = np.load( os.path.join(self.rel_path, 'dataset/arrays/', "shader" + '.npy') )[:size_per_dataset,:]
                     ## ensure that there are at least as many lighting parameters as requested images
                     assert files.shape[0] == size_per_dataset
 
                 ## somposite images are represented as pointwise multiplication between albedo and shading,
                 ## so is stored as dict of filenames for both. The multiplication happens upon lazy loading.
                 elif sel == 'input':
-                    files = {}
-                    files['reflectance'] = self.__find_sort_files(dataset, 'albedo')[:size_per_dataset]
-                    files['shading'] = self.__find_sort_files(dataset, 'shading')[:size_per_dataset]
-                    assert len(files['reflectance']) == size_per_dataset and len(files['shading']) == size_per_dataset
+                    files = self.__find_sort_files(dataset, 'composite')[:size_per_dataset] 
+                    assert len(files) == size_per_dataset        
+                    # files = {}
+                    # files['reflectance'] = self.__find_sort_files(dataset, 'albedo')[:size_per_dataset]
+                    # files['shading'] = self.__find_sort_files(dataset, 'shading')[:size_per_dataset]
+                    # assert len(files['reflectance']) == size_per_dataset and len(files['shading']) == size_per_dataset
                 
                 ## other intrinsic images are represented as list of sorted filenames
                 else:
                     files = self.__find_sort_files(dataset, sel)[:size_per_dataset] 
+                    print("sel :",sel)
+                    print("len files: ",len(files))
+                    print("size per dataset: ",size_per_dataset)
                     assert len(files) == size_per_dataset        
                 self.set_specific.append(files)
             self.data_files.append(self.set_specific)
@@ -109,18 +116,20 @@ class IntrinsicDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         outputs = []
         for ind, sel in enumerate(self.selections):
-
             ## lights : simply index into array
             if sel == 'lights':
-                out = self.data_files[ind][idx,:]
+                out = self.data_files[ind][idx]
+                # out = self.data_files[ind][idx,:]
 
             ## composite : pointwise multiplication between reflectance and shading
             elif sel == 'input':
-                reflectance_path = self.data_files[ind]['reflectance'][idx]
-                shading_path = self.data_files[ind]['shading'][idx]
-                reflectance = self.__read_image(reflectance_path)
-                shading = self.__read_image(shading_path)
-                out = reflectance * shading
+                path = self.data_files[ind][idx]
+                out = self.__read_image(path)
+                # reflectance_path = self.data_files[int(ind)]['reflectance'][int(idx)]
+                # shading_path = self.data_files[int(ind)]['shading'][int(idx)]
+                # reflectance = self.__read_image(reflectance_path)
+                # shading = self.__read_image(shading_path)
+                # out = reflectance * shading
             
             ## other intrinsic images : read image from disk
             else:

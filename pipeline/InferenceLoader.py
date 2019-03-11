@@ -81,15 +81,18 @@ class InferenceDataset(torch.utils.data.Dataset):
 
             ## lights : simply index into array
             if sel == 'lights':
-                out = self.data_files[ind][idx,:]
+                out = self.data_files[ind][idx]
+                # out = self.data_files[ind][idx,:]
 
             ## composite : pointwise multiplication between reflectance and shading
             elif sel == 'input':
-                reflectance_path = self.data_files[ind]['reflectance'][idx]
-                shading_path = self.data_files[ind]['shading'][idx]
-                reflectance = self.__read_image(reflectance_path)
-                shading = self.__read_image(shading_path)
-                out = reflectance * shading
+                path = self.data_files[ind][idx]
+                out = self.__read_image(path)
+                # reflectance_path = self.data_files[ind]['reflectance'][idx]
+                # shading_path = self.data_files[ind]['shading'][idx]
+                # reflectance = self.__read_image(reflectance_path)
+                # shading = self.__read_image(shading_path)
+                # out = reflectance * shading
             
             ## other intrinsic images : read image from disk
             else:
