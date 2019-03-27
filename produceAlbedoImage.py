@@ -37,7 +37,10 @@ inference_loader = torch.utils.data.DataLoader(inference_sets, batch_size=1, num
 index = 0
 for ind, tensors in enumerate(inference_loader):
         tensors = [Variable(t.float().cuda(async=True)) for t in tensors]
+        print("Tensor shaaape is : ",tensors)
         inp, mask = tensors
+        print("Input shaaape is : ",inp.shape)
+        print("Mask shaaape is : ",inp.shape)
         # refl_pred = 3*256*256 , shape_pred = 3*256*256 , depth_pred = 256*256
         refl_pred, depth_pred, shape_pred, lights_pred = model.forward(inp, mask)
         refl_pred = detachAndSqueeze(refl_pred)
